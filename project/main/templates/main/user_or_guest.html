@@ -1,0 +1,10 @@
+{% extends 'main/base.html' %}
+{% block content %}
+<h1>Вход</h1>
+<a href="{% url 'app_vladislav_yurenya:enter' %}">
+        <button class="glow-on-hover" type="submit">Войти как user</button>
+    </a>
+<a href="{% url 'app_vladislav_yurenya:all_post' %}">
+        <button class="glow-on-hover" type="submit">Войти как гость</button>
+    </a>
+{% endblock %}

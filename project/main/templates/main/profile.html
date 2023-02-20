@@ -1,0 +1,18 @@
+{% extends 'main/base.html' %}
+{% block content %}
+<h1>Рад вас видеть {{ profile.name }}!</h1>
+<h1>Ваши данные: </h1>
+<ul>
+    <h2>Никнейм: {{ profile.name }}</h2>
+    <h2>Контактный номерочек: {{ profile.tel }}</h2>
+    <h2>Почта : {{ profile.email }}</h2>
+</ul>
+<a href="{% url 'app_vladislav_yurenya:all_post' %}">
+        <button class="glow-on-hover" type="submit">Все записи</button>
+    </a><br><br>
+
+<a href="{% url 'app_vladislav_yurenya:update_profile' object.pk %}">
+        <button class="glow-on-hover" type="submit">Изменить данные профиля</button>
+    </a><br><br>
+
+{% endblock %}

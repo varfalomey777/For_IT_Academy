@@ -1,0 +1,18 @@
+{% extends 'main/base.html' %}
+{% block content %}
+<h1>Список ваших объявлений</h1>
+<a href="{% url 'app_vladislav_yurenya:all_post' %}">
+        <button class="glow-on-hover" type="submit">Все записи</button>
+    </a><br><br>
+<ul>
+    <h1>Марка авто: {{ object.car_brand }}</h1>
+    <h1>Модель авто: {{ object.car_model }}</h1>
+    <p>Стоимость : {{ object.cost }}$</p>
+    <p>Год выпуска: {{ object.year }}</p>
+    <p><img class="img-article-left thumb" src="{{ object.photo.url }}" width="360px" ></p>
+    <p>Описание: {{ object.content }}</p>
+    <p>Продажа в городе: {{ object.city }}</p>
+    <h2>Имя владельца: {{ object.name_user }}</h2>
+    <h2>Номер телефона: <a href="tel:{{ object.number_user }}">{{ object.number_user }}</a></h2>
+</ul>
+{% endblock %}

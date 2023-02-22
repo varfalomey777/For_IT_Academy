@@ -1,17 +1,18 @@
 {% extends 'main/base.html' %}
 {% block content %}
-<h1>Серьезно удалить
+<h1>Удаление
 {% if object.car_brand == "BMW" %}
-    это прекрасное чудо всея планеты !?
+    этого прекрасного чуда всея планеты !?
     {% else %}
     записи об: {{ object.car_brand }}
-    {%endif%}</h1>
+    {%endif%}
+</h1>
 <form method="POST">
   {% csrf_token %}
   {{form.as_p}}
 <button class="glow-on-hover" type="submit">Да</button>
 </form><br>
-<a href="{% url 'app_vladislav_yurenya:all_post' %}">
+<a href="{% url 'app_vladislav_yurenya:my_post_list' %}">
         <button class="glow-on-hover" type="submit">Отмена</button>
     </a>
 {% endblock %}

@@ -123,14 +123,21 @@ class UpdateProfile(LoginRequiredMixin, UpdateView):
     success_url = reverse_lazy("app_vladislav_yurenya:all_post")
     fields = ["name", "tel", "email"]
 
-class MyPost(DetailView):
+class MyPostList(LoginRequiredMixin,ListView):
+    model = Post
+    template_name = 'main/my_post_list.html'
+    def get_queryset(self):
+        my_post=Post.objects.filter(key_id=self.request.user)
+        return {"my_post":my_post}
+
+
+class MyPostUpdate(LoginRequiredMixin,UpdateView):
     model = Post
     template_name = "main/my_post.html"
-    def get_queryset(self):
-        my_post=Post.object.filter(key_id=self.request.user)
-        return {"my_post":my_post}
-    def get_object(self, queryset: Any = None) -> Any:
-        object_2 = self.model.objects.get(  # type: ignore
-            key=self.request.user.id
-        )
-        return object_2
+    success_url = reverse_lazy('app_vladislav_yurenya:my_post_list')
+    fields = ["car_brand", "car_model", "cost", "year", "content", "photo", "city", "name_user", "number_user"]
+
+class MyPostDelete(LoginRequiredMixin,DeleteView):
+    model = Post
+    template_name = 'main/my_post_delete.html'
+    success_url = reverse_lazy('app_vladislav_yurenya:my_post_list')

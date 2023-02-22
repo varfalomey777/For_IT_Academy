@@ -1,0 +1,27 @@
+{% extends 'main/base.html' %}
+{% block content %}
+<h1>Список ваших объявлений</h1>
+<a href="{% url 'app_vladislav_yurenya:all_post' %}">
+        <button class="glow-on-hover" type="submit">Назад ко всем</button>
+    </a><br><br>
+
+{% for i in object_list.my_post %}
+<ul>
+    <h1>Марка авто: {{ i.car_brand }}</h1>
+    <h1>Модель авто: {{ i.car_model }}</h1>
+    <p>Стоимость : {{ i.cost }}$</p>
+    <p>Год выпуска: {{ i.year }}</p>
+    <p><img class="img-article-left thumb" src="{{ i.photo.url }}" width="360px" ></p>
+    <p>Описание: {{ i.content }}</p>
+    <p>Продажа в городе: {{ i.city }}</p>
+    <h2>Имя владельца: {{ i.name_user }}</h2>
+    <h2>Номер телефона: <a href="tel:{{ i.number_user }}">{{ i.number_user }}</a></h2>
+        <a href="{% url 'app_vladislav_yurenya:my_post_update' i.pk %}">
+        <button class="glow-on-hover" type="submit">Изменить</button>
+    </a><br><br>
+      <a href="{% url 'app_vladislav_yurenya:my_post_delete' i.pk %}">
+        <button class="glow-on-hover" type="submit">Удалить</button>
+    </a>
+</ul><hr>
+{% endfor %}
+{% endblock %}

@@ -13,6 +13,8 @@ urlpatterns = [
     path('enter/', views.EnterUser.as_view(), name='enter'),
     path('profile/', views.DetailProfile.as_view(), name='profile'),
     path('update_profile/<int:pk>/', views.UpdateProfile.as_view(), name='update_profile'),
-    path('my_post/', views.MyPost.as_view(), name='my_post'),
+    path('my_post/', views.MyPostList.as_view(), name='my_post_list'),
+    path('my_post/<int:pk>/update', views.MyPostUpdate.as_view(), name='my_post_update'),
+    path('my_post/<int:pk>/delete', views.MyPostDelete.as_view(), name='my_post_delete'),
 
 ]

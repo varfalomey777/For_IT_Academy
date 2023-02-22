@@ -1,7 +1,10 @@
 {% extends 'main/base.html' %}
 {% block content %}
-<h1>Подробнее о: {{ object.car_brand }}</h1>
-
+{% if user.id == object.key_id %}
+<h1>Ваше объявление</h1>
+{% else %}
+<h1>Подробности объявления</h1>
+{% endif %}
 <ul>
     <h2>Марка авто: {{ object.car_brand }}</h2>
     <h2>Модель авто: {{ object.car_model }}</h2>

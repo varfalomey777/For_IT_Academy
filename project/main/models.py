@@ -20,6 +20,8 @@ class Post(models.Model):
     city = models.CharField(max_length=20, verbose_name="Продажа в городе ")
     time_create=models.DateTimeField(auto_now_add=True)
     key=models.ForeignKey(User,blank=True,null=True,on_delete=models.CASCADE)
+    tag=models.ForeignKey("Tag",blank=True,null=True,on_delete=models.CASCADE)
+
 
     def __str__(self) -> Any:
         return f"{self.name}, {self.cost}, {self.year}, {self.content}, {self.photo}," \
@@ -38,3 +40,9 @@ class Profile(models.Model):
 
     def __str__(self) -> Any:
         return f"{self.user}"
+
+class Tag(models.Model):
+    name = models.CharField(blank=True, null=True, max_length=200)
+
+    def __str__(self) -> Any:
+        return f"{self.name}"

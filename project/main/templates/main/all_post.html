@@ -1,7 +1,16 @@
 {% extends 'main/base.html' %}
 {% block content %}
 <h1>Добро пожаловать!!!</h1>
+<form action="{% url 'app_vladislav_yurenya:filter_tag_post' %}" method="GET">
+{% for i in object_list.unique %}
+        <button name = "hz" value="{{ i.car_brand }}" class="glow-on-hover" type="submit">{{i.car_brand}}</button>
+<br><br>
+{% endfor %}</form>
 <h1>Список всех объявлений</h1>
+<form action="{% url 'app_vladislav_yurenya:all_post' %}" method="GET">
+    <input name="search">
+    <button class="glow-on-hover" type="submit">Поиск</button>
+</form><br>
 {% if user.is_authenticated %}
 <a href="{% url 'app_vladislav_yurenya:profile' %}">
         <button class="glow-on-hover" type="submit">Профиль</button>
@@ -25,7 +34,7 @@
     </a>
 <hr>
 {% endif %}
-{% for i in object_list %}
+{% for i in object_list.posts %}
 <ul>
     <p>Дата публикации: {{ i.time_create }}</p>
     <h1>{{ i.car_brand }}</h1>

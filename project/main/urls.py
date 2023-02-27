@@ -16,5 +16,7 @@ urlpatterns = [
     path('my_post/', views.MyPostList.as_view(), name='my_post_list'),
     path('my_post/<int:pk>/update', views.MyPostUpdate.as_view(), name='my_post_update'),
     path('my_post/<int:pk>/delete', views.MyPostDelete.as_view(), name='my_post_delete'),
+    path('filter_tag_post/', views.FilterTag.as_view(), name='filter_tag_post'),
+
 
 ]

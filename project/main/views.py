@@ -24,7 +24,7 @@ from django.views.generic import UpdateView
 from django.views.generic.edit import CreateView
 from django.views.generic.edit import FormView
 
-from .models import Post, Profile
+from .models import Post, Profile, Tag
 
 
 class CreatePost(LoginRequiredMixin,CreateView):
@@ -35,11 +35,25 @@ class CreatePost(LoginRequiredMixin,CreateView):
     def form_valid(self, form):
         new = form.save(commit=False)
         new.key=self.request.user
+        name_tag=form.cleaned_data["car_brand"]
+        tag_for_use=Tag.objects.create(name=name_tag)
+        tag_for_use.save()
+        new.tag=tag_for_use
         return super().form_valid(form)
 
 class ListPost(ListView):
     model = Post
     template_name = "main/all_post.html"
+
+    def get_queryset(self):
+        unique = Post.objects.values("car_brand").distinct()
+
+        if self.request.GET.get('search') is None or self.request.GET.get('search') == '':
+            posts=Post.objects.all()
+        else:
+            posts=Post.objects.filter(car_brand__contains=self.request.GET.get('search'))
+
+        return {'posts':posts,'unique':unique}
 
 class DetailPost(DetailView):
     model = Post
@@ -56,6 +70,7 @@ class DeletePost(LoginRequiredMixin,DeleteView):
     model = Post
     template_name = 'main/delete.html'
     success_url = reverse_lazy('app_vladislav_yurenya:all_post')
+
 
 class DetailProfile(DetailView):
     model = Profile
@@ -141,3 +156,11 @@ class MyPostDelete(LoginRequiredMixin,DeleteView):
     model = Post
     template_name = 'main/my_post_delete.html'
     success_url = reverse_lazy('app_vladislav_yurenya:my_post_list')
+
+class FilterTag(ListView):
+    template_name = 'main/all_post.html'
+    model = Post
+    def get_queryset(self):
+        unique = Post.objects.values("car_brand").distinct()
+        posts = Post.objects.filter(car_brand=self.request.GET.get('hz'))
+        return {'posts':posts,'unique':unique}

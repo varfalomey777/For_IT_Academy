@@ -4,6 +4,8 @@ import requests
 import random
 import datetime
 import pytz
+import sqlite3
+
 
 #Даже если на улице метель, ты всегда будешь моим солнышком 🤗🤗🤗
 API_KEY='934fdf4b41df998e0c46607ab549d136'
@@ -21,6 +23,7 @@ IF_COLD=["Холод не помеха, когда есть горячий ко�
 "Не выходи, змэрзнешь! 🤧🤧🤧",
 "Лучше под одеялко, и теплого чая 🥲🥲🥲",
 "Я не мама, но одевайся теплее🧤🧣🧤",
+"Надо сказать, что моя реакция на холод, как у телефона в минусовых температурах - выключаюсь и ухожу в спящий режим 📱📱📱",
 "Дубак. У меня все."]
 IF_VERY_COLD=["Не выходи! Там жопка! ⚠️⚠️⚠️",
 "В такой мороз только к мишке под бочок 🧸🧸🧸",
@@ -42,7 +45,6 @@ IF_ALMOST_NORM=["В жопку холод, уже выше 0 🥳🥳🥳",
 "Отличного дня и замечательного настроения, обнял 🙈🙈🙈",
 "Увидел тебя сейчас через фронталку, сначала думал ангел, а потом понял, что это ты 💙💙💙",
 "Все же лучше, чем минусовая температура😉😉😉",
-"Надо сказать, что моя реакция на холод, как у телефона в минусовых температурах - выключаюсь и ухожу в спящий режим 📱📱📱",
 "Сорян ребятульки, творчесский кризис 🤖🤖🤖",
 "Твои прекосновения к моим кнопкам, аж мурашки по винтикам 🔞🔞🔞",
 "Вы просто излучаете энергию успеха. Этот день принадлежит только вам 👑👑👑"]
@@ -118,8 +120,17 @@ def button_city(call):
 
 @bot.callback_query_handler(func = lambda call:call.data == 'Brest' or call.data == 'Brest' or call.data == 'Vitebsk' or call.data == 'Gomel' or call.data == 'Grodno' or call.data == 'Minsk' or call.data == 'Mogilev' )
 def weather_city(call):
-    global user_city
-    user_city = call.data
+    connection = sqlite3.connect("BD.db")
+    cursor = connection.cursor()
+    cursor.execute(f"INSERT INTO users (user, city) VALUES ({call.message.chat.id}, '{call.data}')")
+    connection.commit()
+    connection.close()
+    # connection = sqlite3.connect("BD.db")
+    # cursor = connection.cursor()
+    # cursor.execute(f"SELECT city FROM users WHERE user = '{call.message.chat.id}'")
+    # result = cursor.fetchone()
+    # user_city = result[0]
+    # connection.close()
     url = f'https://api.openweathermap.org/data/2.5/weather?q={call.data}&appid={API_KEY}&units=metric'
     response = requests.get(url)
     data = response.json()
@@ -129,7 +140,6 @@ def weather_city(call):
         types.InlineKeyboardButton('Выбрать локацию', callback_data='country'),
         types.InlineKeyboardButton('Вероятность осадков', callback_data='osadki'),
         types.InlineKeyboardButton('Погода через ...', callback_data='in_an_hour'),
-        types.InlineKeyboardButton('Погода час', callback_data='hour'),
 
     ]
     markup = types.InlineKeyboardMarkup(row_width=2)
@@ -203,11 +213,16 @@ def weather_city(call):
 
 @bot.callback_query_handler(func = lambda call: call.data == 'osadki' )
 def procent(call):
+    connection = sqlite3.connect("BD.db")
+    cursor = connection.cursor()
+    cursor.execute(f"SELECT city FROM users WHERE user = '{call.message.chat.id}' ORDER BY id DESC LIMIT 1")
+    result = cursor.fetchone()
+    user_city = result[0]
+    connection.close()
     url = f'https://api.openweathermap.org/data/2.5/forecast?q={user_city}&appid={API_KEY}&units=metric&cnt=9'
     response = requests.get(url)
     data = response.json()
     now = datetime.datetime.now()
-    data = response.json()
     utc = pytz.utc
     menesk = pytz.timezone('Europe/Minsk')
     time_minsk = utc.localize(now).astimezone(menesk).timestamp()
@@ -223,6 +238,12 @@ def procent(call):
 
 @bot.callback_query_handler(func = lambda call: call.data == 'in_an_hour')
 def weather_city_new(call):
+    connection = sqlite3.connect("BD.db")
+    cursor = connection.cursor()
+    cursor.execute(f"SELECT city FROM users WHERE user = '{call.message.chat.id}' ORDER BY id DESC LIMIT 1")
+    result = cursor.fetchone()
+    user_city = result[0]
+    connection.close()
     now = datetime.datetime.now()
     url = f'https://api.openweathermap.org/data/2.5/forecast?q={user_city}&appid={API_KEY}&units=metric&cnt=9'
     response = requests.get(url)
@@ -397,6 +418,12 @@ def weather_city_new(call):
 
 @bot.callback_query_handler(func = lambda call:call.data == 'now' )
 def weather_city(call):
+    connection = sqlite3.connect("BD.db")
+    cursor = connection.cursor()
+    cursor.execute(f"SELECT city FROM users WHERE user = '{call.message.chat.id}' ORDER BY id DESC LIMIT 1")
+    result = cursor.fetchone()
+    user_city = result[0]
+    connection.close()
     url = f'https://api.openweathermap.org/data/2.5/weather?q={user_city}&appid={API_KEY}&units=metric'
     response = requests.get(url)
     data = response.json()
@@ -476,16 +503,4 @@ def weather_city(call):
     SPEAK = random.choice(SPEAKS)
     bot.send_message(call.message.chat.id, f'{SPEAK} выбери пожалуйста дальнейшие указания...', reply_markup=markup)
 
-
-@bot.callback_query_handler(func = lambda call: call.data == 'hour' )
-def procent(call):
-    now = datetime.datetime.now()
-    hour = now + datetime.timedelta(hours=1)
-    now = datetime.datetime.now()
-    utc = pytz.utc
-    menesk = pytz.timezone('Europe/Minsk')
-    time_minsk = utc.localize(now).astimezone(menesk).timestamp()
-    url = f'https://api.openweathermap.org/data/2.5/forecast?q={user_city}&appid={API_KEY}&units=metric&dt=1679001295.846944'
-    response = requests.get(url)
-    data = response.json()
 bot.polling(none_stop=True)
